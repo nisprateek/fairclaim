@@ -1,0 +1,12 @@
+.git
+.venv
+__pycache__
+.pytest_cache
+.ruff_cache
+.mypy_cache
+.DS_Store
+.env
+node_modules
+src/frontend/node_modules
+evals/results
+*.log

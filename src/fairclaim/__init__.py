@@ -1,0 +1,2 @@
+"""fairclaim application package."""
+

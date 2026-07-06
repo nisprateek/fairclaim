@@ -1,0 +1,133 @@
+:root {
+  color-scheme: light;
+
+  /* FairClaimAI logo palette */
+  --brand-navy: #032a5f;
+  --brand-navy-rgb: 3 42 95;
+  --brand-sky: #47bfff;
+  --brand-sky-rgb: 71 191 255;
+  --brand-violet: #9988ff;
+  --brand-violet-rgb: 153 136 255;
+  --md-primary: var(--brand-navy);
+  --md-primary-rgb: var(--brand-navy-rgb);
+  --md-on-primary: #ffffff;
+  --md-primary-container: #dbe8ff;
+  --md-on-primary-container: #042654;
+  --md-on-primary-container-rgb: 4 38 84;
+  --md-secondary-container: #eeeaff;
+  --md-on-secondary-container: #21194a;
+  --md-tertiary: var(--brand-violet);
+  --md-tertiary-rgb: var(--brand-violet-rgb);
+  --md-on-tertiary: #ffffff;
+  --md-tertiary-container: #e9e4ff;
+  --md-on-tertiary-container: #201653;
+  --md-surface: #edf3fd;
+  --md-surface-container: #f4f8ff;
+  --md-surface-container-high: #e6eefb;
+  --md-surface-muted: #d9e5f7;
+  --md-on-surface: #14233d;
+  --md-on-surface-rgb: 20 35 61;
+  --md-on-surface-variant: #47587a;
+  --md-outline: #6c7fa0;
+  --md-outline-variant: #bed0ea;
+
+  /* Light text/lines for elements sitting directly on the navy canvas */
+  --md-on-canvas: #eef4ff;
+  --md-on-canvas-rgb: 238 244 255;
+
+  /* Semantic tones kept inside the tonal system */
+  --md-error: #b3261e;
+  --md-error-container: #f9dedc;
+  --md-on-error-container: #410e0b;
+  --md-success: #1d6a51;
+  --md-success-container: #c9ecd9;
+  --md-on-success-container: #06392a;
+  --md-warning: #775a0b;
+  --md-warning-container: #f9e3ad;
+  --md-on-warning-container: #261a00;
+
+  /* Shape */
+  --radius-xs: 8px;
+  --radius-sm: 12px;
+  --radius-md: 16px;
+  --radius-lg: 24px;
+  --radius-xl: 28px;
+  --radius-2xl: 32px;
+  --radius-hero: 48px;
+  --radius-full: 999px;
+
+  /* Motion */
+  --ease-standard: cubic-bezier(0.2, 0, 0, 1);
+
+  /* Elevation — soft, diffuse, low opacity */
+  --elev-1: 0 1px 2px rgb(var(--md-on-surface-rgb) / 0.07), 0 1px 8px rgb(var(--md-on-surface-rgb) / 0.05);
+  --elev-2: 0 2px 6px rgb(var(--md-on-surface-rgb) / 0.09), 0 6px 20px rgb(var(--md-on-surface-rgb) / 0.07);
+  --elev-3: 0 6px 16px rgb(var(--md-primary-rgb) / 0.14), 0 14px 44px rgb(var(--md-on-surface-rgb) / 0.1);
+
+  --font: 'Roboto', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+
+  font-family: var(--font);
+  color: var(--md-on-surface);
+  background: var(--brand-navy);
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  min-width: 320px;
+  min-height: 100%;
+  background: var(--brand-navy);
+}
+
+body {
+  min-width: 320px;
+  min-height: 100svh;
+  margin: 0;
+  /* Exact same shade as the header — one uniform navy canvas */
+  background: var(--brand-navy);
+}
+
+button,
+textarea,
+input,
+select {
+  font: inherit;
+}
+
+button {
+  -webkit-tap-highlight-color: transparent;
+}
+
+#root {
+  min-height: 100svh;
+}
+
+:focus-visible {
+  outline: 2px solid var(--brand-violet);
+  outline-offset: 2px;
+}
+
+::selection {
+  color: var(--md-on-primary);
+  background: var(--md-primary);
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--md-outline-variant);
+  border-radius: var(--radius-full);
+}

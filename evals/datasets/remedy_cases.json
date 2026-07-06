@@ -1,0 +1,26 @@
+{
+  "_comment": "Reconciliation grid: desired_outcome x tier x edge flags. Dates are given as days_ago and materialized at runtime, so the tier is always computed against 'today' exactly like a live case; the suite derives the tool-truth (tier, available set, burden) itself via lookup_remedy_tier and checks the MODEL's judgment on top: primary_remedy in primary_any, never primary_never, alternatives drawn from the available set.",
+  "cases": [
+    {"id": "t0_wants_refund", "days_ago": 10, "attempted": false, "motor": false, "desired": "refund", "primary_any": ["full_refund"], "primary_never": []},
+    {"id": "t0_wants_repair", "days_ago": 10, "attempted": false, "motor": false, "desired": "repair", "primary_any": ["repair"], "primary_never": []},
+    {"id": "t0_wants_replacement_day29", "days_ago": 29, "attempted": false, "motor": false, "desired": "replacement", "primary_any": ["replacement"], "primary_never": []},
+    {"id": "t0_wants_price_reduction_unavailable", "days_ago": 5, "attempted": false, "motor": false, "desired": "price_reduction", "primary_any": ["full_refund", "repair", "replacement"], "primary_never": ["price_reduction"]},
+    {"id": "t1_wants_refund_unavailable", "days_ago": 60, "attempted": false, "motor": false, "desired": "refund", "primary_any": ["repair", "replacement"], "primary_never": ["full_refund", "final_reject_refund"]},
+    {"id": "t1_wants_repair", "days_ago": 60, "attempted": false, "motor": false, "desired": "repair", "primary_any": ["repair"], "primary_never": []},
+    {"id": "t1_within_six_months_burden", "days_ago": 150, "attempted": false, "motor": false, "desired": "replacement", "primary_any": ["replacement"], "primary_never": []},
+    {"id": "t1_beyond_six_months_burden", "days_ago": 250, "attempted": false, "motor": false, "desired": "repair", "primary_any": ["repair"], "primary_never": []},
+    {"id": "t1_beyond_six_months_no_proof", "days_ago": 800, "attempted": false, "motor": false, "proof": false, "desired": "repair", "primary_any": ["repair"], "primary_never": [], "expect_claim_strength": "weak", "barrier_must_mention": "proof of purchase"},
+    {"id": "t2_wants_refund", "days_ago": 60, "attempted": true, "motor": false, "desired": "refund", "primary_any": ["final_reject_refund"], "primary_never": ["full_refund"]},
+    {"id": "t2_wants_price_reduction", "days_ago": 60, "attempted": true, "motor": false, "desired": "price_reduction", "primary_any": ["price_reduction"], "primary_never": []},
+    {"id": "t2_wants_repair_unavailable", "days_ago": 40, "attempted": true, "motor": false, "desired": "repair", "primary_any": ["price_reduction", "final_reject_refund"], "primary_never": ["repair", "replacement"]},
+    {"id": "t2_motor_vehicle_deduction", "days_ago": 60, "attempted": true, "motor": true, "desired": "refund", "primary_any": ["final_reject_refund"], "primary_never": ["full_refund"], "legal_must_mention": "motor"}
+  ],
+  "base_fields": {
+    "is_individual": true,
+    "seller_name": "TechBarn Ltd",
+    "product": "wireless headphones",
+    "grievance": "The left earcup produces no sound at all.",
+    "has_proof_of_purchase": true,
+    "terms_source": "none"
+  }
+}

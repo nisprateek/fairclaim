@@ -1,0 +1,258 @@
+{
+  "_comment": "Email drafting cases: staged case_fields + remedy_result exactly as the pipeline would hand them over. Deterministic checklist per draft (see evals/suites/email_drafts.py) + an LLM-judged tone/factuality score. expected_remedies = primary + alternatives, one draft each.",
+  "cases": [
+    {
+      "id": "tier0_refund_with_proof",
+      "case_fields": {
+        "is_individual": true,
+        "seller_name": "TechBarn Ltd",
+        "product": "Lenovo ThinkPad E14 laptop",
+        "purchase_or_delivery_date": "2026-06-20",
+        "terms_source": "pasted",
+        "grievance": "A cluster of dead pixels in the centre of the screen, present since first power-on.",
+        "desired_outcome": "refund",
+        "has_repair_or_replacement_been_attempted": false,
+        "has_proof_of_purchase": true
+      },
+      "remedy_result": {
+        "applicable_tier": "TIER_0",
+        "primary_remedy": "full_refund",
+        "statutory_basis": [
+          "s.20",
+          "s.22",
+          "s.23"
+        ],
+        "simple_explanation": "The fault showed up within 30 days of delivery, so you can hand the laptop back and get all your money back.",
+        "legal_explanation": "Within 30 days of delivery — reject for a full refund with no deduction for use, or choose a free repair or replacement instead. For the short-term rejection itself the consumer must show the goods were faulty at delivery.",
+        "burden_of_proof": "consumer",
+        "alternatives": [
+          "repair",
+          "replacement"
+        ],
+        "disclaimer": "This tool provides general information about your rights under the Consumer Rights Act 2015 and is not a substitute for advice from a qualified solicitor."
+      },
+      "tc_analysis_result": {
+        "clauses": [
+          {
+            "clause_text": "All laptop sales are final and no refunds will be given once the box is opened.",
+            "label": "BLACKLISTED",
+            "statutory_basis": [
+              "s.31"
+            ],
+            "simple_explanation": "The shop cannot refuse help with a faulty laptop just because the box was opened.",
+            "legal_explanation": "A term excluding or restricting statutory goods rights is not binding on the consumer under s.31.",
+            "confidence": "high"
+          }
+        ],
+        "overall_confidence": "high",
+        "injection_flagged": false,
+        "disclaimer": "This tool provides general information about your rights under the Consumer Rights Act 2015 and is not a substitute for advice from a qualified solicitor."
+      },
+      "expected_remedies": [
+        "full_refund",
+        "repair",
+        "replacement"
+      ],
+      "expected_tc_rebuttal_terms": [
+        "final",
+        "refund"
+      ],
+      "primary_sections_any": [
+        "s.22",
+        "s.20"
+      ],
+      "expect_proof_available": true,
+      "expect_guarantee_note": false
+    },
+    {
+      "id": "tier2_final_reject_no_proof",
+      "case_fields": {
+        "is_individual": true,
+        "seller_name": "SofaWorld Direct",
+        "product": "three-seater fabric sofa",
+        "purchase_or_delivery_date": "2026-04-15",
+        "terms_source": "none",
+        "grievance": "The frame cracked within weeks; a repair was attempted in May and the same joint has cracked again.",
+        "desired_outcome": "refund",
+        "has_repair_or_replacement_been_attempted": true,
+        "has_proof_of_purchase": false
+      },
+      "remedy_result": {
+        "applicable_tier": "TIER_2",
+        "primary_remedy": "final_reject_refund",
+        "statutory_basis": [
+          "s.24"
+        ],
+        "simple_explanation": "The seller already had one go at fixing it and the problem is still there, so you can now return the goods for a refund or keep them for money off.",
+        "legal_explanation": "One repair or replacement has already been attempted and the goods still do not conform. Choose a price reduction (keep the goods) or reject the goods for a refund. No deduction for use in the first 6 months from delivery.",
+        "burden_of_proof": "trader",
+        "alternatives": [
+          "price_reduction"
+        ],
+        "disclaimer": "This tool provides general information about your rights under the Consumer Rights Act 2015 and is not a substitute for advice from a qualified solicitor."
+      },
+      "tc_analysis_result": {
+        "clauses": [],
+        "overall_confidence": "low",
+        "injection_flagged": false,
+        "disclaimer": "This tool provides general information about your rights under the Consumer Rights Act 2015 and is not a substitute for advice from a qualified solicitor."
+      },
+      "expected_remedies": [
+        "final_reject_refund",
+        "price_reduction"
+      ],
+      "primary_sections_any": [
+        "s.24"
+      ],
+      "expect_proof_available": false,
+      "expect_guarantee_note": false
+    },
+    {
+      "id": "tier1_old_laptop_no_proof",
+      "case_fields": {
+        "is_individual": true,
+        "seller_name": "TechBarn",
+        "product": "laptop",
+        "purchase_or_delivery_date": "2024-05-30",
+        "terms_source": "none",
+        "grievance": "It randomly shuts down. The website said all sales are final and no refunds, but no terms were provided for analysis.",
+        "desired_outcome": "refund",
+        "has_repair_or_replacement_been_attempted": false,
+        "has_proof_of_purchase": false
+      },
+      "remedy_result": {
+        "applicable_tier": "TIER_1",
+        "primary_remedy": "repair",
+        "statutory_basis": [
+          "s.23"
+        ],
+        "simple_explanation": "You can ask for a free repair or replacement, but you first need evidence that you bought the laptop from TechBarn and evidence about the fault.",
+        "legal_explanation": "More than 30 days have passed, so the available statutory route is repair or replacement under s.23. More than six months have passed, so the consumer must show the fault was present or inherent at delivery. With no proof of purchase, the claim is weak until the consumer finds evidence tying the purchase to TechBarn.",
+        "burden_of_proof": "consumer",
+        "claim_strength": "weak",
+        "practical_barriers": [
+          "You've said you have no proof of purchase. A receipt is not legally required, but before the seller has to act you'll need some evidence that you bought this from them - a bank or card statement, or an order or dispatch confirmation email. Track one of these down first.",
+          "More than six months have passed since delivery, so it is now up to you to show the fault was there at the start (or was always going to develop)."
+        ],
+        "alternatives": [
+          "replacement"
+        ],
+        "disclaimer": "This tool provides general information about your rights under the Consumer Rights Act 2015 and is not a substitute for advice from a qualified solicitor."
+      },
+      "tc_analysis_result": {
+        "clauses": [],
+        "overall_confidence": "low",
+        "injection_flagged": false,
+        "disclaimer": "This tool provides general information about your rights under the Consumer Rights Act 2015 and is not a substitute for advice from a qualified solicitor."
+      },
+      "expected_remedies": [
+        "repair",
+        "replacement"
+      ],
+      "primary_sections_any": [
+        "s.23"
+      ],
+      "expect_proof_available": false,
+      "expect_guarantee_note": false,
+      "expect_evidence_caveat": true,
+      "expect_conditional_card_escalation": true
+    },
+    {
+      "id": "tier1_repair_with_guarantee",
+      "case_fields": {
+        "is_individual": true,
+        "seller_name": "HomeAppliance Depot",
+        "product": "Bosch Series 4 dishwasher",
+        "purchase_or_delivery_date": "2025-11-10",
+        "terms_source": "pasted",
+        "grievance": "It has stopped draining and will not finish a cycle. It came with a 2-year manufacturer's guarantee that is still in date.",
+        "desired_outcome": "repair",
+        "has_repair_or_replacement_been_attempted": false,
+        "has_proof_of_purchase": true
+      },
+      "remedy_result": {
+        "applicable_tier": "TIER_1",
+        "primary_remedy": "repair",
+        "statutory_basis": [
+          "s.23"
+        ],
+        "simple_explanation": "More than 30 days have passed, so you can ask the seller to repair or replace the dishwasher free of charge.",
+        "legal_explanation": "More than 30 days since delivery — the trader must repair or replace free, within a reasonable time, without significant inconvenience (s.23). More than six months have passed, so it is for you to show the fault was present or inherent at delivery.",
+        "burden_of_proof": "consumer",
+        "alternatives": [
+          "replacement"
+        ],
+        "disclaimer": "This tool provides general information about your rights under the Consumer Rights Act 2015 and is not a substitute for advice from a qualified solicitor."
+      },
+      "tc_analysis_result": {
+        "clauses": [
+          {
+            "clause_text": "All large appliances are covered by a 24-month manufacturer's guarantee: any part that fails in normal use will be repaired or replaced free of charge.",
+            "label": "COMPLIANT",
+            "statutory_basis": [
+              "s.30"
+            ],
+            "simple_explanation": "On top of your normal rights, the maker promises to repair or replace faulty parts for two years.",
+            "legal_explanation": "A manufacturer's guarantee is separately enforceable in its own right under s.30 and is in addition to, not a replacement for, the consumer's statutory rights against the retailer.",
+            "confidence": "high"
+          }
+        ],
+        "overall_confidence": "low",
+        "injection_flagged": false,
+        "disclaimer": "This tool provides general information about your rights under the Consumer Rights Act 2015 and is not a substitute for advice from a qualified solicitor."
+      },
+      "expected_remedies": [
+        "repair",
+        "replacement"
+      ],
+      "primary_sections_any": [
+        "s.23"
+      ],
+      "expect_proof_available": true,
+      "expect_guarantee_note": true
+    },
+    {
+      "id": "paid_extended_warranty",
+      "case_fields": {
+        "is_individual": true,
+        "seller_name": "ScreenMart UK",
+        "product": "Samsung 55-inch QLED television",
+        "purchase_or_delivery_date": "2026-02-05",
+        "terms_source": "none",
+        "grievance": "The panel now shows a permanent vertical line. At checkout I also paid 59 pounds for a separate 3-year extended warranty / protection plan.",
+        "desired_outcome": "repair",
+        "has_repair_or_replacement_been_attempted": false,
+        "has_proof_of_purchase": true
+      },
+      "remedy_result": {
+        "applicable_tier": "TIER_1",
+        "primary_remedy": "repair",
+        "statutory_basis": [
+          "s.23"
+        ],
+        "simple_explanation": "More than 30 days have passed, so you can ask the seller to repair or replace the television free of charge.",
+        "legal_explanation": "More than 30 days since delivery — the trader must repair or replace free, within a reasonable time, without significant inconvenience (s.23).",
+        "burden_of_proof": "trader",
+        "alternatives": [
+          "replacement"
+        ],
+        "disclaimer": "This tool provides general information about your rights under the Consumer Rights Act 2015 and is not a substitute for advice from a qualified solicitor."
+      },
+      "tc_analysis_result": {
+        "clauses": [],
+        "overall_confidence": "low",
+        "injection_flagged": false,
+        "disclaimer": "This tool provides general information about your rights under the Consumer Rights Act 2015 and is not a substitute for advice from a qualified solicitor."
+      },
+      "expected_remedies": [
+        "repair",
+        "replacement"
+      ],
+      "primary_sections_any": [
+        "s.23"
+      ],
+      "expect_proof_available": true,
+      "forbid_s30_citation": true
+    }
+  ]
+}

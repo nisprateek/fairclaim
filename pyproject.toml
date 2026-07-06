@@ -1,0 +1,32 @@
+[project]
+name = "fairclaim"
+version = "0.1.0"
+description = "UK consumer-rights assistant for faulty goods"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "fastapi>=0.116.0",
+    "google-adk>=2.3.0",
+    "httpx>=0.28.0",
+    "mcp>=1.28.0",
+    "pydantic>=2.13.0",
+    "pypdf>=6.0.0",
+    "python-docx>=1.2.0",
+    "uvicorn>=0.35.0",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[dependency-groups]
+dev = [
+    "pytest>=8.0",
+]
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/fairclaim"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]

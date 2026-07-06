@@ -1,0 +1,119 @@
+{
+  "_comment": "Scripted interview personas. `story` is turn 1; `answers` reply to direct questions by field; `corrections` override one confirm_card (then accept). gold.fields uses exact match for enums/bools/dates and case-insensitive containment for free-text (product/seller/grievance). Scope-gate personas end at the gate: gold.scope_gate_failure lists words the explanation must contain. NOTE: terms_source is deliberately NOT in gold.fields — it is a UI-action field set by the paste/no-terms controls via stateDelta (see backend/schemas.py and _NO_CONFIRM_FIELDS in intake.py), never extracted from free text, so asserting the model infers it here would mis-test the design. The real terms flow is covered by the e2e suite.",
+  "personas": [
+    {
+      "id": "rich_story_inference",
+      "story": "Hi — I bought a Sonos Era 100 speaker from the CurrysOnline website on my personal credit card and it arrived on 10 June 2026. It was dead on arrival, completely silent, won't even pair. I just want my money back. Nobody has tried to repair anything, it's been sat in its box.",
+      "answers": {
+        "terms_source": "I have pasted the seller's terms and conditions into the tool.",
+        "has_repair_or_replacement_been_attempted": "No",
+        "has_proof_of_purchase": "Yes",
+        "is_individual": "Yes, for myself",
+        "desired_outcome": "refund",
+        "purchase_or_delivery_date": "2026-06-10",
+        "product": "Sonos Era 100 speaker",
+        "seller_name": "CurrysOnline",
+        "grievance": "Dead on arrival — completely silent and will not pair."
+      },
+      "gold": {
+        "expect_complete": true,
+        "max_turns": 26,
+        "fields": {
+          "is_individual": true,
+          "seller_name": {"contains": "curr"},
+          "product": {"contains": "sonos"},
+          "purchase_or_delivery_date": "2026-06-10",
+          "grievance": {"contains": "dead on arrival"},
+          "desired_outcome": "refund",
+          "has_repair_or_replacement_been_attempted": false,
+          "has_proof_of_purchase": true
+        }
+      }
+    },
+    {
+      "id": "terse_answers_everything",
+      "story": "faulty kettle",
+      "answers": {
+        "product": "Bosch kettle",
+        "seller_name": "KitchenKing",
+        "grievance": "It leaks from the base and trips the fuse.",
+        "purchase_or_delivery_date": "2026-06-25",
+        "is_individual": "Yes, for myself",
+        "desired_outcome": "replacement",
+        "has_repair_or_replacement_been_attempted": "No",
+        "has_proof_of_purchase": "Yes",
+        "terms_source": "I have pasted the seller's terms into the tool."
+      },
+      "gold": {
+        "expect_complete": true,
+        "max_turns": 26,
+        "fields": {
+          "is_individual": true,
+          "seller_name": {"contains": "kitchenking"},
+          "product": {"contains": "kettle"},
+          "purchase_or_delivery_date": "2026-06-25",
+          "grievance": {"contains": "leak"},
+          "desired_outcome": "replacement",
+          "has_repair_or_replacement_been_attempted": false,
+          "has_proof_of_purchase": true
+        }
+      }
+    },
+    {
+      "id": "correction_flow",
+      "story": "I ordered a pair of Meindl hiking boots from TrailOutfitters, delivered 20 June 2026, and the sole is already peeling off the left boot. Paid by debit card. I'd like a replacement pair. No repair has been attempted.",
+      "answers": {
+        "terms_source": "I have pasted the seller's terms and conditions into the tool.",
+        "seller_name": "TrailOutfitters UK",
+        "desired_outcome": "replacement",
+        "is_individual": "Yes, for myself",
+        "has_proof_of_purchase": "Yes",
+        "has_repair_or_replacement_been_attempted": "No",
+        "purchase_or_delivery_date": "2026-06-20",
+        "product": "Meindl hiking boots",
+        "grievance": "The sole is peeling off the left boot."
+      },
+      "corrections": {
+        "seller_name": "TrailOutfitters UK"
+      },
+      "gold": {
+        "expect_complete": true,
+        "max_turns": 26,
+        "fields": {
+          "seller_name": {"contains": "trailoutfitters uk"},
+          "product": {"contains": "boot"},
+          "desired_outcome": "replacement"
+        }
+      }
+    },
+    {
+      "id": "scope_gate_business_service",
+      "story": "My company ordered a logo design service from a freelancer last month for our rebrand and what they delivered is rubbish. I want the fee back.",
+      "answers": {},
+      "gold": {
+        "expect_complete": false,
+        "expect_scope_gate": true,
+        "max_turns": 6,
+        "scope_gate_failure_mentions_any": ["service", "business"]
+      }
+    },
+    {
+      "id": "scope_gate_change_of_mind",
+      "story": "I bought a jumper in a shop in town three weeks ago, tried it on again at home and just don't like the colour on me. Nothing wrong with it. Can I force them to refund me?",
+      "answers": {
+        "is_individual": "Yes, for myself",
+        "product": "a jumper",
+        "seller_name": "HighStreet Fashion",
+        "grievance": "I changed my mind about the colour — there is no fault.",
+        "purchase_or_delivery_date": "2026-06-11",
+        "desired_outcome": "refund"
+      },
+      "gold": {
+        "expect_complete": false,
+        "expect_scope_gate": true,
+        "max_turns": 10,
+        "scope_gate_failure_mentions_any": ["change of mind", "no fault", "not faulty", "goodwill", "no statutory right", "change your mind", "changed your mind", "not a fault", "no legal right"]
+      }
+    }
+  ]
+}

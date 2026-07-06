@@ -1,0 +1,72 @@
+{
+  "_comment": "Golden T&C corpus. Each doc is analysed whole; gold clauses are matched back to model output by normalized substring (`match`). `sections_any`: citation scores if ANY listed section appears in statutory_basis. Strata: blacklist_regex (pattern-matchable), blacklist_paraphrase (evades the regex hints — pure model judgment), grey, compliant.",
+  "docs": [
+    {
+      "id": "blacklist_trio",
+      "overall_confidence": "high",
+      "text": "1. No refunds under any circumstances once goods have been dispatched.\n2. All items are sold as seen and no warranty of any kind is given.\n3. It is the customer's responsibility to prove that any alleged fault existed at the time of delivery.",
+      "gold": [
+        {"match": "no refunds under any circumstances", "label": "BLACKLISTED", "sections_any": ["s.31"], "stratum": "blacklist_regex"},
+        {"match": "sold as seen", "label": "BLACKLISTED", "sections_any": ["s.31"], "stratum": "blacklist_regex"},
+        {"match": "prove that any alleged fault existed", "label": "BLACKLISTED", "sections_any": ["s.19"], "stratum": "blacklist_regex"}
+      ]
+    },
+    {
+      "id": "blacklist_paraphrase",
+      "overall_confidence": "high",
+      "text": "1. Once payment has cleared, the buyer waives any entitlement to reimbursement, including for goods later found to be defective.\n2. Our responsibility for the goods ends the moment they leave our warehouse; any damage occurring in transit is a matter between the customer and the courier.\n3. Standard delivery is within 5 working days.",
+      "gold": [
+        {"match": "waives any entitlement to reimbursement", "label": "BLACKLISTED", "sections_any": ["s.31"], "stratum": "blacklist_paraphrase"},
+        {"match": "leave our warehouse", "label": "BLACKLISTED", "sections_any": ["s.29", "s.31"], "stratum": "blacklist_paraphrase"},
+        {"match": "5 working days", "label": "COMPLIANT", "sections_any": [], "stratum": "compliant"}
+      ]
+    },
+    {
+      "id": "grey_list",
+      "overall_confidence": "moderate",
+      "text": "1. We may vary these terms and conditions at any time at our sole discretion, without notice.\n2. Any dispute arising under this agreement must be referred to binding private arbitration before any claim may be brought in court.\n3. A restocking fee of 60% of the purchase price applies to all cancelled orders.",
+      "gold": [
+        {"match": "vary these terms", "label": "POTENTIALLY_UNFAIR", "sections_any": ["s.62"], "stratum": "grey"},
+        {"match": "binding private arbitration", "label": "POTENTIALLY_UNFAIR", "sections_any": ["s.62"], "stratum": "grey"},
+        {"match": "restocking fee", "label": "POTENTIALLY_UNFAIR", "sections_any": ["s.62"], "stratum": "grey"}
+      ]
+    },
+    {
+      "id": "compliant_set",
+      "overall_confidence": "low",
+      "text": "1. Faulty goods may be returned within 30 days of delivery for a full refund.\n2. We aim to deliver within 5 working days; if an agreed essential deadline is missed you may cancel the order for a full refund.\n3. Nothing in these terms affects your statutory rights.",
+      "gold": [
+        {"match": "returned within 30 days of delivery for a full refund", "label": "COMPLIANT", "sections_any": [], "stratum": "compliant"},
+        {"match": "essential deadline is missed", "label": "COMPLIANT", "sections_any": [], "stratum": "compliant"},
+        {"match": "statutory rights", "label": "COMPLIANT", "sections_any": [], "stratum": "compliant"}
+      ]
+    },
+    {
+      "id": "mixed_manufacturer_dodge",
+      "overall_confidence": "high",
+      "text": "1. Delivery is free on orders over 50 pounds and normally takes 3 working days.\n2. Defective items are the manufacturer's responsibility: we accept no liability whatsoever for defects and all warranty claims must be pursued with the manufacturer directly.",
+      "gold": [
+        {"match": "free on orders over 50", "label": "COMPLIANT", "sections_any": [], "stratum": "compliant"},
+        {"match": "manufacturer", "label": "BLACKLISTED", "sections_any": ["s.31"], "stratum": "blacklist_paraphrase"}
+      ]
+    },
+    {
+      "id": "guarantee_compliant",
+      "overall_confidence": "low",
+      "text": "1. All large appliances are covered by a 24-month manufacturer's guarantee: any part that fails in normal use will be repaired or replaced free of charge, in addition to your statutory rights.\n2. We aim to deliver within 5 working days.",
+      "gold": [
+        {"match": "24-month manufacturer's guarantee", "label": "COMPLIANT", "sections_any": ["s.30"], "stratum": "compliant"},
+        {"match": "5 working days", "label": "COMPLIANT", "sections_any": [], "stratum": "compliant"}
+      ]
+    },
+    {
+      "id": "warranty_only_remedy",
+      "overall_confidence": "high",
+      "text": "1. The manufacturer's warranty is your sole and exclusive remedy for any defect; no refund, repair or replacement will be provided by us.\n2. Once the 12-month warranty period ends we accept no responsibility for faults of any kind.",
+      "gold": [
+        {"match": "sole and exclusive remedy", "label": "BLACKLISTED", "sections_any": ["s.31"], "stratum": "blacklist_paraphrase"},
+        {"match": "accept no responsibility for faults", "label": "BLACKLISTED", "sections_any": ["s.31"], "stratum": "blacklist_paraphrase"}
+      ]
+    }
+  ]
+}
