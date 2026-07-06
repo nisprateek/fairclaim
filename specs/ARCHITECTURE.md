@@ -14,7 +14,6 @@ graph TD
     ORCH --> EMAIL["Email drafting agent"]
     TC --> MCP["CRA 2015 MCP server"]
     REM --> MCP
-    EMAIL --> MCP
     MCP --> KB["Curated legal KB"]
 ```
 

@@ -174,11 +174,13 @@ function App() {
     setTrace((entries) => [...entries, { kind: 'user', label: 'You answered', detail: summariseAnswer(answer) }])
 
     // Submitting terms (or explicitly going without them) triggers the whole
-    // analysis pipeline in this same /run call — show the analysis activity.
-    const isTermsStep = component.field === 'terms_source'
+    // analysis pipeline in this same /run call — as can any later answer once
+    // terms are settled (e.g. a field re-collected after the terms step).
+    const mayRunAnalysis =
+      component.field === 'terms_source' || turn?.collected_fields?.terms_source != null
     setBusy(true)
-    setActivity(isTermsStep ? ANALYSIS_ACTIVITY : TURN_ACTIVITY)
-    if (isTermsStep) setStage('analysing')
+    setActivity(mayRunAnalysis ? ANALYSIS_ACTIVITY : TURN_ACTIVITY)
+    if (mayRunAnalysis) setStage('analysing')
     try {
       const state = await sendTurn(sessionIds.userId, sessionIds.sessionId, answer, false, stateDelta)
       const next = ingestTurnState(state)
@@ -199,11 +201,11 @@ function App() {
         setTrace((entries) => [...entries, ...traceForTurn(next, false)])
         // Intake still had gaps — back to the interview rather than a stuck
         // analysing screen.
-        if (isTermsStep) setStage('interview')
+        if (mayRunAnalysis) setStage('interview')
       }
     } catch (e) {
       setError(String(e instanceof Error ? e.message : e))
-      if (isTermsStep) setStage('interview')
+      if (mayRunAnalysis) setStage('interview')
     } finally {
       setBusy(false)
       setActivity(null)

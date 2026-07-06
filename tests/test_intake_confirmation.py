@@ -80,6 +80,63 @@ def test_model_inferred_terms_source_still_gets_terms_card():
     assert turn["next_component"]["field"] == "terms_source"
 
 
+def test_premature_model_terms_card_defers_to_owed_confirms():
+    # The model jumped straight to the terms step while inferred fields still
+    # owe confirm cards. Terms must stay the interview's final question — the
+    # frontend runs the analysis pipeline off the terms answer — so the sweep
+    # confirms the earlier fields first and re-emits the terms card last.
+    state = {
+        "intake_turn": _turn(
+            dict(ALL_FIELDS, terms_source=None),
+            next_component={
+                "type": "file_upload",
+                "field": "terms_source",
+                "prompt": "Finally, do you have the seller's terms and conditions?",
+            },
+        ),
+        CONFIRMED_FIELDS_KEY: ["is_individual"],
+    }
+    finalize_turn(_ctx(state))
+    turn = state["intake_turn"]
+    assert turn["is_complete"] is False
+    component = turn["next_component"]
+    assert (component["type"], component["field"]) == ("confirm_card", "product")
+
+
+def test_model_terms_card_stands_once_everything_else_is_confirmed():
+    prompt = "Do you have Watches of Switzerland's terms and conditions to paste?"
+    state = {
+        "intake_turn": _turn(
+            dict(ALL_FIELDS, terms_source=None),
+            next_component={"type": "file_upload", "field": "terms_source", "prompt": prompt},
+        ),
+        CONFIRMED_FIELDS_KEY: sorted(f for f in ALL_FIELDS if f != "terms_source"),
+    }
+    finalize_turn(_ctx(state))
+    turn = state["intake_turn"]
+    assert turn["is_complete"] is False
+    assert turn["next_component"]["field"] == "terms_source"
+    assert turn["next_component"]["prompt"] == prompt
+
+
+def test_confirm_card_drops_stale_options_echoed_from_previous_component():
+    state = {
+        "intake_turn": _turn(
+            dict(ALL_FIELDS),
+            next_component={
+                "type": "confirm_card",
+                "field": "grievance",
+                "prompt": "So the watch stopped working after a week — is that right?",
+                "options": ["I have them and can paste them", "I don't have them"],
+            },
+        )
+    }
+    finalize_turn(_ctx(state))
+    component = state["intake_turn"]["next_component"]
+    assert component["field"] == "grievance"
+    assert "options" not in component
+
+
 def test_direct_answer_marks_field_confirmed():
     state = {
         "intake_turn": _turn(

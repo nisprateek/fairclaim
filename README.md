@@ -24,17 +24,17 @@ solicitor advice.
 
 ```mermaid
 graph TD
-    U[User / React Frontend] -->|State Delta & JSON UI| O[OrchestratorAgent<br/>Deterministic State Machine]
+    U[User / React Frontend] -->|State Delta & JSON UI Components| O[orchestrator_agent<br/>Deterministic BaseAgent]
     
     subgraph ADK Multi-Agent System
-        O -->|1. Intake Turn| I[IntakeAgent<br/>Generative UI Slot-Filling]
-        I -.->|Confirm inferred facts| O
+        O -->|1. Intake Turn| I[intake_agent (LlmAgent)<br/>Generative UI Slot-Filling]
+        I -.->|Yields facts & components| O
         
-        O -->|2. T&C Wrap & Analysis| T[TcAnalysisAgent<br/>Untrusted Input Sandboxed]
+        O -->|2. T&C Analysis<br/>Optional / Conditional| T[tc_analysis_agent (LlmAgent)<br/>Untrusted Input Sandboxed]
         
-        O -->|3. Compute Remedies| R[RemediesAgent]
+        O -->|3. Compute Remedies| R[remedies_agent (LlmAgent)]
         
-        O -->|4. Draft Complaints| E[EmailAgent<br/>References computed remedies & T&C verdicts]
+        O -->|4. Draft Complaints| E[email_agent (LlmAgent)<br/>Tailored Tone Drafts]
     end
     
     T -.-> MCP[CRA MCP Server<br/>stdio tools]

@@ -12,6 +12,7 @@ from __future__ import annotations
 from fairclaim.backend.agents.intake.components import (
     BARE_REJECTIONS,
     BOOLEAN_CHOICE_FIELDS,
+    CONFIRM_CARD_KEYS,
     CONFIRM_PROMPTS,
     EXPLICIT_UI_FIELDS,
     FALLBACK_COMPONENTS,
@@ -208,8 +209,28 @@ def _emit_component(callback_context, turn: dict, component: dict) -> None:
 def _stripped(component: dict | None) -> dict:
     """Component minus null-valued keys, for re-emit comparison: the model's
     schema-parsed output carries every optional UiComponent key as None,
-    while deterministic fallback components only carry the keys they use."""
-    return {k: v for k, v in (component or {}).items() if v is not None}
+    while deterministic fallback components only carry the keys they use.
+    Confirm cards also drop keys they don't render, so a stale `options`
+    echo from an earlier component never reads as a new question."""
+    stripped = {k: v for k, v in (component or {}).items() if v is not None}
+    if stripped.get("type") == "confirm_card":
+        return {k: v for k, v in stripped.items() if k in CONFIRM_CARD_KEYS}
+    return stripped
+
+
+def _sweep_owes_earlier_field(fields: dict, confirmed: set, target_field: str) -> bool:
+    """True when the sweep below still owes a question or confirmation for a
+    field ordered before `target_field` in FALLBACK_COMPONENTS."""
+    for field, _ in FALLBACK_COMPONENTS:
+        if field == target_field:
+            return False
+        if field in EXPLICIT_UI_FIELDS and field not in confirmed:
+            return True
+        if fields.get(field) is None:
+            return True
+        if field not in confirmed and field not in NO_CONFIRM_FIELDS:
+            return True
+    return False
 
 
 def finalize_turn(callback_context) -> None:
@@ -271,6 +292,18 @@ def finalize_turn(callback_context) -> None:
         field = prev_component["field"]
         _emit_component(callback_context, turn, {"field": field, **FALLBACK_COMPONENTS_BY_FIELD[field]})
         return
+
+    # The terms card triggers the analysis pipeline when answered, so the
+    # frontend relies on it being the interview's final question. A model
+    # that jumps to terms early is overruled: the sweep below asks and
+    # confirms everything else first, then emits the terms card last.
+    if (
+        next_component
+        and target_field in EXPLICIT_UI_FIELDS
+        and _sweep_owes_earlier_field(fields, confirmed, target_field)
+    ):
+        next_component = None
+        target_field = None
 
     # Keep the model's component only when it is still a valid owed question.
     if next_component and target_field in VALID_FIELDS:

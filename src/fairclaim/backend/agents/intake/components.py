@@ -78,6 +78,10 @@ BOOLEAN_CHOICE_FIELDS = {
     "has_proof_of_purchase",
 }
 
+# The only keys a confirm card renders — models echo stale keys (e.g. the
+# previous card's `options`) that must not survive into the emitted turn.
+CONFIRM_CARD_KEYS = ("type", "field", "prompt", "inferred_value")
+
 # Bare rejections drop the inferred value so the sweep re-asks directly.
 BARE_REJECTIONS = {"no", "no.", "nope", "nah", "wrong", "incorrect", "not right", "that's wrong"}
 
@@ -197,7 +201,7 @@ def canonical_component(component: dict) -> dict:
     if field not in FALLBACK_COMPONENTS_BY_FIELD:
         return component
     if component.get("type") == "confirm_card" and field not in DIRECT_INPUT_CONFIRM_FIELDS:
-        return component
+        return {k: component[k] for k in CONFIRM_CARD_KEYS if component.get(k) is not None}
     canonical = FALLBACK_COMPONENTS_BY_FIELD[field]
     normalized = {
         "field": field,
