@@ -22,24 +22,8 @@ solicitor advice.
 
 ## Architecture
 
-```mermaid
-graph TD
-    U[User / React Frontend] -->|State Delta & JSON UI Components| O[orchestrator_agent<br/>Deterministic BaseAgent]
-    
-    subgraph ADK Multi-Agent System
-        O -->|1. Intake Turn| I[intake_agent (LlmAgent)<br/>Generative UI Slot-Filling]
-        I -.->|Yields facts & components| O
-        
-        O -->|2. T&C Analysis<br/>Optional / Conditional| T[tc_analysis_agent (LlmAgent)<br/>Untrusted Input Sandboxed]
-        
-        O -->|3. Compute Remedies| R[remedies_agent (LlmAgent)]
-        
-        O -->|4. Draft Complaints| E[email_agent (LlmAgent)<br/>Tailored Tone Drafts]
-    end
-    
-    T -.-> MCP[CRA MCP Server<br/>stdio tools]
-    R -.-> MCP
-```
+<img width="1047" height="647" alt="Screenshot 2026-07-07 at 00 32 01 copy" src="https://github.com/user-attachments/assets/c99c4657-7add-48dc-bef8-e7bd4180a914" />
+
 
 - **Deterministic orchestration.** The root agent is plain code, not an LLM router: intake
   runs until complete, then T&C analysis → remedies → email, each gated on its own output key
@@ -66,10 +50,11 @@ graph TD
 
 ### Models
 
-| Tier | Model | Thinking | Used by |
-| --- | --- | --- | --- |
-| Fast | `gemini-3.1-flash-lite` | LOW–MEDIUM | intake, remedies |
-| Capable | `gemini-3.5-flash` | MEDIUM–HIGH | T&C clause analysis, email drafting |
+| Tier | Model | Used by |
+| --- | --- | --- |
+| Fast | `gemini-3.1-flash-lite` | intake, remedies |
+| Capable | `gemini-3.5-flash` | T&C clause analysis, email drafting |
+| Judge | `gemini-3.1-pro-preview` | evals |
 
 Override with `FAIRCLAIMAI_FAST_MODEL` / `FAIRCLAIMAI_CAPABLE_MODEL`.
 Eval judging can be overridden with `FAIRCLAIMAI_JUDGE_MODEL`.
