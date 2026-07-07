@@ -85,6 +85,19 @@ CONFIRM_CARD_KEYS = ("type", "field", "prompt", "inferred_value")
 # Bare rejections drop the inferred value so the sweep re-asks directly.
 BARE_REJECTIONS = {"no", "no.", "nope", "nah", "wrong", "incorrect", "not right", "that's wrong"}
 
+# The UI renders boolean confirm cards as the direct yes/no question, so an
+# unqualified yes/no answers that question and binds directly to the field.
+BARE_YES_NO: dict[str, bool] = {
+    "yes": True,
+    "yes.": True,
+    "yep": True,
+    "yeah": True,
+    "no": False,
+    "no.": False,
+    "nope": False,
+    "nah": False,
+}
+
 # Mirrors CaseFields.desired_outcome's Literal options.
 OUTCOME_OPTIONS = {"refund", "repair", "replacement", "price_reduction"}
 

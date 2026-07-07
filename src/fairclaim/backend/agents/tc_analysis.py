@@ -77,7 +77,7 @@ tc_analysis_agent = LlmAgent(
     include_contents="none",
     tools=[CRA_TOOLSET],
     # HIGH: clause classification is the one genuinely judgment-heavy task.
-    generate_content_config=thinking(ThinkingLevel.HIGH),
+    generate_content_config=thinking(ThinkingLevel.MEDIUM),
     after_agent_callback=_after_agent,
     output_schema=TcAnalysisResult,
     output_key="tc_analysis_result",

@@ -11,6 +11,7 @@ from __future__ import annotations
 
 from fairclaim.backend.agents.intake.components import (
     BARE_REJECTIONS,
+    BARE_YES_NO,
     BOOLEAN_CHOICE_FIELDS,
     CONFIRM_CARD_KEYS,
     CONFIRM_PROMPTS,
@@ -96,10 +97,18 @@ def _apply_confirm_answer(component: dict, answer: str, fields: dict, confirmed:
     accepted = normalized == str(component.get("inferred_value") or "").strip().lower()
 
     if field in BOOLEAN_CHOICE_FIELDS:
+        # The UI renders boolean confirm cards as the direct yes/no question,
+        # so a bare yes/no answers that question directly — never the
+        # accept/flip protocol, whatever inferred_value the model wrote.
+        direct = BARE_YES_NO.get(normalized)
+        if direct is not None:
+            fields[field] = direct
+            confirmed.add(field)
+            return
         baseline = fields.get(field)
         if not isinstance(baseline, bool):
             baseline = display_bool(component.get("inferred_value"))
-        # After a boolean "is that right?", an unqualified no flips the value.
+        # A qualified "no, ..." disagrees with the stated inference — flip it.
         if accepted:
             if baseline is not None:
                 fields[field] = baseline

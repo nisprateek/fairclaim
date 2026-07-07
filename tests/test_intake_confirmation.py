@@ -224,6 +224,30 @@ def test_confirm_card_no_flips_boolean_but_echoed_no_accepts():
     assert "has_repair_or_replacement_been_attempted" in state[CONFIRMED_FIELDS_KEY]
 
 
+@pytest.mark.parametrize("inferred_value", ["No, not yet", "false", "No.", "Not attempted"])
+def test_confirm_card_bare_no_binds_false_whatever_inferred_value_says(inferred_value):
+    # Live-run regression: the UI renders boolean confirm cards as the direct
+    # yes/no question, so a bare "No" click means False. It must never be read
+    # as "your inference is wrong" and flip a stored False to True just
+    # because the model's inferred_value wasn't the exact string "No".
+    component = {
+        "type": "confirm_card",
+        "field": "has_repair_or_replacement_been_attempted",
+        "prompt": "The seller has not yet attempted a repair or replacement — is that right?",
+        "inferred_value": inferred_value,
+    }
+    state = {
+        "intake_turn": _turn(
+            {"has_repair_or_replacement_been_attempted": False}, next_component=component
+        )
+    }
+
+    capture_prior_fields(_ctx(state, answer="No"))
+
+    assert state["intake_turn"]["collected_fields"]["has_repair_or_replacement_been_attempted"] is False
+    assert "has_repair_or_replacement_been_attempted" in state[CONFIRMED_FIELDS_KEY]
+
+
 def test_confirm_card_boolean_correction_binds_from_inferred_value_when_field_missing():
     # A model can emit a boolean confirm_card with inferred_value but omit the
     # matching collected_fields entry. The user's "No" still needs to become
